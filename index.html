@@ -450,18 +450,8 @@ qqnorm(x3); qqline(x3)
     <ol>
 <li><p>If you ran a Milgram&#39;s study. What is the chance that you will find the first success within the first 5 people?</p></li>
 <li><p>If you randomly sampled 40 persons, how many would you expect to refuse to administer the worst shock? What is the standard deviation of the number of people who would refuse?</p></li>
+<li><p>Approximately 20% of the US population smokes cigarettes. A local government believed their community had a lower smoker rate and commissioned a survey of 400 randomly selected individuals. The survey found that only 59 of the 400 participants smoke cigarettes. If the true proportion of smokers in the community was really 20%, what is the probability of observing 59 or fewer smokers in a sample of 400 people?</p></li>
 </ol>
-
-<pre><code class="r">count &lt;- 40 * 0.35
-std &lt;- sqrt(count * 0.65)
-</code></pre>
-
-<ol>
-<li>Approximately 20% of the US population smokes cigarettes. A local government believed their community had a lower smoker rate and commissioned a survey of 400 randomly selected individuals. The survey found that only 59 of the 400 participants smoke cigarettes. If the true proportion of smokers in the community was really 20%, what is the probability of observing 59 or fewer smokers in a sample of 400 people?</li>
-</ol>
-
-<pre><code class="r">smokers &lt;- sum(dbinom(0:59, size=400, prob=0.2))
-</code></pre>
 
   </article>
   <!-- Presenter Notes -->

@@ -320,17 +320,10 @@ barplot(dbinom(1:100, size=100, prob=0.35), main="Binomial distribution, n = 60,
 2. If you randomly sampled 40 persons, how many would you expect to refuse to administer the worst shock? What is the standard deviation of the number of people who would refuse?
 
 
-```r
-count <- 40 * 0.35
-std <- sqrt(count * 0.65)
-```
 
 3. Approximately 20% of the US population smokes cigarettes. A local government believed their community had a lower smoker rate and commissioned a survey of 400 randomly selected individuals. The survey found that only 59 of the 400 participants smoke cigarettes. If the true proportion of smokers in the community was really 20%, what is the probability of observing 59 or fewer smokers in a sample of 400 people?
 
 
-```r
-smokers <- sum(dbinom(0:59, size=400, prob=0.2))
-```
 
 ---
 ## Homework
