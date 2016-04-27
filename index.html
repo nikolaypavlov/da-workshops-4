@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Analysis with R</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Data Analysis with R">
+  <meta name="author" content="Mykola Pavlov">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Data Analysis with R</h1>
+    <h2>Probability distributions</h2>
+    <p>Mykola Pavlov<br/>Data Scientist at Azzurro.io</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Course Logistic</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Every Wednesday 19:00 - 21:00</li>
+<li>Slides: <a href="http://nikolaypavlov.github.io/da-workshops-4/">http://nikolaypavlov.github.io/da-workshops-4/</a></li>
+<li>Skype Chat: <a href="https://join.skype.com/gjN0CfAd4bhg">https://join.skype.com/gjN0CfAd4bhg</a></li>
+<li>Reference Book: <a href="https://www.openintro.org/stat/textbook.php">https://www.openintro.org/stat/textbook.php</a></li>
+<li>help(Distributions)</li>
+<li>Install the following packages: openintro, ggplot2</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Topics</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Complete probability space, PMF</li>
+<li>Expected value, variance</li>
+<li>Linear Combinations of random variables</li>
+<li>Contineous case, PDF</li>
+<li>Normal Distribution, Z-score, CDF</li>
+<li>Bernulli distribution</li>
+<li>Geometric distribution</li>
+<li>Binomial distribution</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Complete probability space</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\(\Omega = \{w_1, \dotsc, w_n\}\) - sample space, \(w_i\) - elementary sample</p>
+
+<p>\(P(w_1) = p_1, \dotsc, P(w_n) = p_n\), where \(p \in [0,1]\)</p>
+
+<p>\(p_1 +, \dotsc, + p_n = 1\) or \(P(\Omega) = 1\)</p>
+
+<p>\(A \subseteq \Omega, P(A) = \sum_{w_i \in A}p_i\)</p>
+
+<p>All classical probability properties remains valid</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Random Variable, Distribution</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Let&#39;s say we have \(\Omega, P\), than random variable is any function \(\xi: \Omega \to \mathbb{R}\)</p>
+
+<p>\(\xi: \Omega \to \{y_1, \dotsc, y_k\}, \Omega = \{w_1, \dotsc, w_n\}\)</p>
+
+<p>Distribution of random variable \(\xi\): \(P(\xi = y_i) = P({w_i: \xi(w_i) = y_i})\) - Probability Mass Function (PMF)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Two books are assigned for a statistics class: a textbook and its corresponding study guide. The university bookstore determined 20% of enrolled students do not buy either book, 55% buy the textbook only, and 25% buy both books. The textbook costs \$137 and the study guide \$33.</p>
+
+<p>If random variable X is the amount of money a single student will spend on books, the distribution of X:</p>
+
+<p><img src="assets/img/books.png" alt="Books"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Expected Value of a Discrete Random Variable</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\(E(\xi) = \mu = \sum_{w \in \Omega}\xi(w)P(w) = \sum_{j=1}^{k}y_j P(\xi = y_j)\) </p>
+
+<pre><code class="r">data &lt;- data.frame(cost=c(0, 137, 170), prob=c(0.2, 0.55, 0.25))
+ex &lt;- sum(data$cost * data$prob)  # Expected value
+p &lt;- ggplot(data, aes(cost, prob)) + geom_bar(stat=&quot;identity&quot;) + xlab(&quot;Cost&quot;) + ylab(&quot;Probability&quot;) + ggtitle(&quot;Probability distribution for the bookstore’s revenue from a single student&quot;)
+p &lt;- p + geom_hline(yintercept=0, size=1, color=&quot;black&quot;) 
+p &lt;- p + geom_vline(xintercept=ex, linetype=&quot;dashed&quot;, colour=&quot;red&quot;, size=1)
+p
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Variance, Linear Combinations</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\(Var(\xi) = \sigma^2 = E[(\xi - E(\xi))^2]\)</p>
+
+<h3>Linear combinations of random variables</h3>
+
+<p>\(X,Y\) - are random variables</p>
+
+<p>\(E(aX + bY) = a E(X) + b E(Y)\)</p>
+
+<p>\(Var(a X + b Y) = a^2 Var(X) + b^2 Var(Y)\)</p>
+
+<p>Leonard has invested \$6000 in Google and \$2000 in Exxon Mobil. If X and Y represents the change in Google’s and Exxon&#39;s stock next month. Suppose they have recently been rising 2.1% and 0.4% per month, respectively. Compute the expected change in Leonard’s stock portfolio for next month.</p>
+
+<p>\(E(6000 * X + 2000 * Y) = 6000 * 0.021 + 2000 * 0.004 = 134\)</p>
+
+<p>Let&#39;s say \(V(X) = 0.0072\) and \(Var(Y) = 0.0027\). Compute the variance of Leonard’s monthly return.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Contineous case, PDF</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">hist(email$num_char, seq(0, 195.0, by=5), probability=T, xlab=&quot;Number of characters (in thousands)&quot;, 
+     ylab=&quot;&quot;, main=&quot;Probability Density Function&quot;)
+lines(density(email$num_char), col=&quot;red&quot;, lwd=3)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4"></p>
+
+<p>A random variable \(X\) has density \(f_X\), if: \(P[a \leq X \leq b] = \int_{a}^{b} f_X(x) dx\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Normal Distribution</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\(N(x|\mu,\sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{\frac{-(x - \mu)^2}{2\sigma^2}}\)</p>
+
+<pre><code class="r">x &lt;- seq(-5, 5, length=100) 
+sx &lt;- dnorm(x, mean=0, sd=1)
+hx &lt;- dnorm(x, mean=0, sd=2)
+plot(x, sx, type=&quot;l&quot;, lwd=3, col=&quot;darkblue&quot;, ylab=&quot;&quot;, main=&quot;Normal Distribution&quot;)
+lines(x, hx, type=&quot;l&quot;, lwd=3, col=&quot;darkgreen&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Z-score $ = \frac{x - \mu}{\sigma}$</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/kuzu.jpg" alt="Possum"></p>
+
+<p>Head lengths of brushtail possums follow a nearly normal distribution with mean 92.6 mm and standard deviation 3.6 mm. Compute the Z-scores for possums with head lengths of 95.4 mm and 85.8 mm. Which observation is more unusual?</p>
+
+<p>First: \((95.4 - 92.6) / 3.6 = 0.78\)     Second: \((85.8 - 92.6) / 3.6 = -1.89\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>How unusual are they? Percentile.</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">c(pnorm(0.78), pnorm(-1.89))
+</code></pre>
+
+<pre><code>## [1] 0.78230456 0.02937898
+</code></pre>
+
+<pre><code class="r">cord.x &lt;- c(77, seq(77, 95.4, 0.01), 95.4)
+cord.y &lt;- c(0, dnorm(seq(77, 95.4, 0.01), mean=92.6, sd=3.6), 0)
+curve(dnorm(x, 92.6, 3.6), from=77, to=107, lwd=2, xlab=&quot;Length (mm)&quot;, main=&quot;Possum head length distribution&quot;, ylab=&quot;&quot;)
+polygon(cord.x, cord.y, col=&#39;skyblue&#39;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Cumulative distribution function (CDF)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\(f_X(x) = P(X \leq x)\)</p>
+
+<pre><code class="r">curve(pnorm(x, 92.6, 3.6), from=77, to=107, lwd=2, xlab=&quot;Length (mm)&quot;, main=&quot;Possum head length distribution&quot;, ylab=&quot;&quot;)
+abline(v=95.4, col=&quot;darkblue&quot;, lty=2, lwd=3)
+abline(v=85.8, col=&quot;darkgreen&quot;, lty=2, lwd=3)
+legend(&quot;bottomright&quot;, c(&quot;95.4mm head&quot;, &quot;85.8mm head&quot;), col=c(&quot;darkblue&quot;, &quot;darkgreen&quot;), lty=2)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Exercise</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li><p>What is the probability that possum has at least 98 mm head?</p></li>
+<li><p>Possum has 91.5 mm head. What is his percentile? What percent of possums has longer heads?</p></li>
+<li><p>What is the possum head length at the 55th percentile? See help for *norm family functions</p></li>
+<li><p>What is the probability that a random possum head is between 93 mm and 94 mm?</p></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>68-95-99.7 rule</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/norm.png" alt="68-95-99.7 rule"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:;">
+  <hgroup>
+    <h2>Quantile-Quantile plot</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">x1 &lt;- rnorm(40); x2 &lt;- rnorm(100); x3 &lt;- rnorm(1000)
+par(mfrow=c(1,3))
+qqnorm(x1); qqline(x1)
+qqnorm(x2); qqline(x2)
+qqnorm(x3); qqline(x3)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-13-1.png" alt="plot of chunk unnamed-chunk-13"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2>Bernulli distribution</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/shock.png" alt="Shock"></p>
+
+<p>\(p = 0.35, (1-p) = 0.65\)</p>
+
+<p>\(\mu = E(X) = P(X=0) * 0 + P(X=1) * 1 = (1 - p) * 0 + p * 1 = p\)</p>
+
+<p>\(\sigma^2 = E[(X - E(X))^2] = P(X=0)(0-p)^2 + P(X=1)(1-p)^2 = \\ = (1-p)p^2 + p(1-p)^2 = p(1-p)\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <hgroup>
+    <h2>Geometric distribution, iid</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>What are the chances that experimentator will stop the study after the first person? The second person? The third? nth person?</p>
+
+<p>\(P(First) = 0.35, P(Second) = (0.65) (0.35) = 0.228, P(Third) = (0.65)(0.65)(0.35) = 0.148\) </p>
+
+<p>\(P(n^{th} person) = (0.65)^{n-1}(0.35) = (1-0.35)^{n-1}(0.35) = (1-p)^{n-1}p\)</p>
+
+<p>\(\mu = \frac{1}{p},  \sigma^2 = \frac{1-p}{p^2}\) </p>
+
+<pre><code class="r">barplot(dgeom(0:10, prob=0.35), main=&quot;Geometric distribution, p = 0.35&quot;, ylab=&quot;Probability&quot;, xlab=&quot;Trials&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-14-1.png" alt="plot of chunk unnamed-chunk-14"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>Binomial distribution</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Suppose we randomly selected four individuals to participate in the Milgram&#39;s study. What is the chance exactly one of them will be a success?</p>
+
+<p>Let’s consider a scenario where one person refuses:</p>
+
+<p>\(P(A=1, B=0, C=0, D=0) = (0.35)(0.65)(0.65)(0.65) = (0.35)^1 (0.65)^3 = 0.096\)</p>
+
+<p>[# of scenarios] x P(single scenario) \(= 4 * (0.35)^1 (0.65)^3 = 0.38\)</p>
+
+<h3>For k success in n trials</h3>
+
+<p>P(single scenario) \(= p^k(1-p)^n-k\)</p>
+
+<p>[# of scenarios] \(= {n \choose k} = \frac{n!}{k!(n-k)!}\)</p>
+
+<p>\({n \choose k}p^k(1-p)^{n-k}\)</p>
+
+<p>\(\mu = np, \sigma^2 = np(1-p)\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <hgroup>
+    <h2>Binomial distribution</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">barplot(dbinom(0:5, size=5, prob=0.35), main=&quot;Binomial distribution, n = 5, p = 0.35&quot;, ylab=&quot;Probability&quot;, xlab=&quot;Number of successful trials&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15"></p>
+
+<h3>Is it binomial?</h3>
+
+<ol>
+<li>The trials are independent. </li>
+<li>The probability of a success, p, is the same for each trial.</li>
+<li>The number of trials, n, is fixed.</li>
+<li>Each trial outcome can be classified as a success or failure</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>What if we increase the number of trials to 10?</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">barplot(dbinom(1:10, size=10, prob=0.35), main=&quot;Binomial distribution, n = 10, p = 0.35&quot;, ylab=&quot;Probability&quot;, xlab=&quot;Number of successful trials&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-16-1.png" alt="plot of chunk unnamed-chunk-16"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>What if we increase the number of trials to 60?</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">barplot(dbinom(1:100, size=100, prob=0.35), main=&quot;Binomial distribution, n = 60, p = 0.35&quot;, ylab=&quot;Probability&quot;, xlab=&quot;Number of successful trials&quot;)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-17-1.png" alt="plot of chunk unnamed-chunk-17"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Exercise</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li><p>If you ran a Milgram&#39;s study. What is the chance that you will find the first success within the first 5 people?</p></li>
+<li><p>If you randomly sampled 40 persons, how many would you expect to refuse to administer the worst shock? What is the standard deviation of the number of people who would refuse?</p></li>
+</ol>
+
+<pre><code class="r">count &lt;- 40 * 0.35
+std &lt;- sqrt(count * 0.65)
+</code></pre>
+
+<ol>
+<li>Approximately 20% of the US population smokes cigarettes. A local government believed their community had a lower smoker rate and commissioned a survey of 400 randomly selected individuals. The survey found that only 59 of the 400 participants smoke cigarettes. If the true proportion of smokers in the community was really 20%, what is the probability of observing 59 or fewer smokers in a sample of 400 people?</li>
+</ol>
+
+<pre><code class="r">smokers &lt;- sum(dbinom(0:59, size=400, prob=0.2))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>Homework</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>[Lab 3 - Probability](<a href="http://htmlpreview.github.io/?https://github.com/andrewpbray/oiLabs-base-R/blob/master/normal_distribution/normal_distribution.html">http://htmlpreview.github.io/?https://github.com/andrewpbray/oiLabs-base-R/blob/master/normal_distribution/normal_distribution.html</a></li>
+<li>Skype Chat for discussions: <a href="https://join.skype.com/gjN0CfAd4bhg">https://join.skype.com/gjN0CfAd4bhg</a></li>
+<li>Reading: OpenIntro Statistics Chapter 2,3, from p. 2.4 till the end</li>
+<li>Reference Book: <a href="https://www.openintro.org/stat/textbook.php">https://www.openintro.org/stat/textbook.php</a></li>
+<li>help(Distributions)</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Course Logistic'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Topics'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Complete probability space'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Random Variable, Distribution'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Example'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Expected Value of a Discrete Random Variable'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Variance, Linear Combinations'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Contineous case, PDF'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Normal Distribution'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Z-score $ = \frac{x - \mu}{\sigma}$'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='How unusual are they? Percentile.'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Cumulative distribution function (CDF)'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Exercise'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='68-95-99.7 rule'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Quantile-Quantile plot'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='Bernulli distribution'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='Geometric distribution, iid'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='Binomial distribution'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='Binomial distribution'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='What if we increase the number of trials to 10?'>
+         20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='What if we increase the number of trials to 60?'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Exercise'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='Homework'>
+         23
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
