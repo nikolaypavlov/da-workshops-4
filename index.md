@@ -120,6 +120,11 @@ A random variable $X$ has density $f_X$, if: $P[a \leq X \leq b] = \int_{a}^{b} 
 ---
 ## Normal Distribution
 
+Video
+
+---
+## Normal Distribution
+
 $N(x|\mu,\sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{\frac{-(x - \mu)^2}{2\sigma^2}}$
 
 
